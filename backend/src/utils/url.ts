@@ -1,5 +1,5 @@
 export const backendurl =
-  process.env.NODE_ENV === 'production' ? 'https://api.example.com' : 'http://localhost:8080/api';
+  process.env.NODE_ENV === 'production' ? 'https://api.example.com' : 'https://112-1-database-final-jygy.vercel.app/api';
 
 export const frontendUrl =
-  process.env.NODE_ENV === 'production' ? 'https://example.com' : 'http://localhost:3000';
+  process.env.NODE_ENV === 'production' ? 'https://example.com' : 'https://112-1-database-final.vercel.app/';
