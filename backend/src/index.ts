@@ -25,8 +25,8 @@ const app = express();
 
 app.use(
   cors({
-    origin: 'https://112-1-database-final.vercel.app',
     credentials: true,
+    origin: 'https://112-1-database-final.vercel.app',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   })
 );
