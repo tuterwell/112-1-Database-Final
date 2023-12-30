@@ -67,7 +67,7 @@ export type UpdateUserPasswordPayload = {
 export type UpdateUserResponse = StudentData;
 
 export type createActivityPayload = Omit<ActivityData, 'activity_id'> &
-  Pick<ChatgroupData, 'chatname'>;
+  Pick<ChatgroupData, 'chat_name'>;
 
 export type getActivityByTitlePayload = Pick<ActivityData, 'title'>;
 
