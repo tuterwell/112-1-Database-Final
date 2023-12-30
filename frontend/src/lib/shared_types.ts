@@ -29,7 +29,7 @@ const MemberDataSchema = z.object({
 const ChatgroupDataSchema = z.object({
   chatgroup_id: z.string().max(100),
   activity_id: z.string().min(1).max(100),
-  chatname: z.string().min(1).max(20),
+  chat_name: z.string().min(1).max(20),
 });
 
 const StudentDataSchema = z.object({
