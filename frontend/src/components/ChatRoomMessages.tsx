@@ -22,6 +22,7 @@ function ChatRoomMessages({ id }: { id: string }) {
   return (
     <div className="px-2 pt-4">
       {messages?.map((message, index) => {
+        if (!message) return <></>;
         const isSender = message.member_id === member?.member_id;
         return (
           <div key={index} className="w-full pt-1">
