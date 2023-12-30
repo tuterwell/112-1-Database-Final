@@ -6,7 +6,7 @@ import Link from 'next/link';
 const ChatGroupList = ({ data }: { data: ChatgroupData }) => {
   return (
     <>
-      <Link href={`/chatroom/${data.chatgroup_id}`}>{data.chatname}</Link>
+      <Link href={`/chatroom/${data.chatgroup_id}`}>{data.chat_name}</Link>
     </>
   );
 };
