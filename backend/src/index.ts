@@ -3,15 +3,15 @@ import compression from 'compression';
 import cors from 'cors';
 import session from 'express-session';
 import passport from 'passport';
-import MongoStore from 'connect-mongo';
+import pgSession from 'connect-pg-simple';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import cloudinary from 'cloudinary';
 
-import { createTable } from '@/models/init';
+import { pool, databaseConnection } from '@/models/init';
 import routes from '@/routes';
 import { env } from '@/utils/env';
 import '@/config/passport.config';
-
-import { createServer } from 'http';
-import { Server } from 'socket.io';
 
 type Message = {
   message_id: string;
@@ -22,6 +22,8 @@ type Message = {
 };
 
 const app = express();
+
+databaseConnection();
 
 app.use(
   cors({
@@ -54,20 +56,19 @@ io.on('connection', (socket) => {
 app.set('trust proxy', 1);
 
 app.use(compression());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
     secret: env.SECRET_KEY,
-    name: 'database_user',
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI,
-      collectionName: 'sessions',
+    name: 'session',
+    store: new (pgSession(session))({
+      pool: pool,
+      createTableIfMissing: true,
     }),
     resave: false,
     saveUninitialized: false,
     cookie: {
-      path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 7,
       secure: false,
       domain: '112-1-database-final.vercel.app',
@@ -77,9 +78,13 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/api', routes);
+cloudinary.v2.config({
+  cloud_name: env.CLOUD_NAME,
+  api_key: env.CLOUD_API_KEY,
+  api_secret: env.CLOUD_API_SECRET,
+});
 
-createTable();
+app.use('/api', routes);
 
 server.listen(8080, () => {
   console.log('server is running on http://localhost:8080');

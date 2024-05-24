@@ -5,6 +5,7 @@ import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 
 import axios from '@/lib/axios';
+import { readAsBase64 } from '@/lib/image';
 
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -13,12 +14,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CardContent, Card } from '@/components/ui/card';
 
-import { categories } from '@/components/navbar/Categories';
+import { mainPageCategories } from '@/components/navbar/Categories';
 import clsx from 'clsx';
 
 export default function Page() {
   const router = useRouter();
   const [topic, setTopic] = useState<string>('');
+  const [image, setImage] = useState<string>('');
   const {
     register,
     handleSubmit,
@@ -38,6 +40,15 @@ export default function Page() {
       category: '',
     },
   });
+
+  const handleFileChange = async (event: React.ChangeEvent): Promise<void> => {
+    const target: HTMLInputElement = event.target as HTMLInputElement;
+    if (target.files) {
+      const file: File = target.files[0];
+      const dataImage: string | ArrayBuffer | null = await readAsBase64(file);
+      setImage(`${dataImage}`);
+    }
+  };
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     if (data.event_start_timestamp > data.event_end_timestamp) {
@@ -65,7 +76,9 @@ export default function Page() {
       capacity: Number(data.capacity),
       student_fee: Number(data.student_fee),
       non_student_fee: Number(data.non_student_fee),
+      picture: image,
     };
+
     axios
       .post(`/activity`, data)
       .then((res) => {
@@ -196,9 +209,13 @@ export default function Page() {
                 </div>
               </div>
               <div className="space-y-2">
+                <Label htmlFor="image">圖片</Label>
+                <Input name="image" type="file" onChange={handleFileChange} />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="tags">選擇類別</Label>
                 <div className="flex flex-wrap gap-2" id="tags">
-                  {categories.map(
+                  {mainPageCategories.map(
                     (category) =>
                       category.type !== 'all' && (
                         <Badge
